@@ -110,6 +110,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "app.accounts",
     "app.chatgpt",
+    "app.notifications",
     "django_crontab",
 ]
 

@@ -79,6 +79,19 @@
         </div>
       </t-card>
     </div>
+
+    <t-dialog
+      theme="warning"
+      placement="center"
+      :header="notificationMessage.title"
+      :body="notificationMessage.content"
+      :visible.sync="visible1"
+      @confirm="onConfirm"
+      :onClose="close1"
+      :cancelBtn="null"
+      :close-on-esc-keydown="false"
+      :close-on-overlay-click="false"
+    />
   </div>
 </template>
 
@@ -104,9 +117,32 @@ const loginForm = reactive({
   invite_id: undefined,
 });
 
+const notificationMessage = ref({ title: '', content: '' }); // 新增的状态变量，用于存储通知信息
+const visible1 = ref(false); // 控制对话框的显示状态
+
 onMounted(async () => {
   await getVersionCfg();
+  await fetchNotificationConfig(); // 新增的函数调用
 });
+
+// 新增的函数，用于获取通知配置
+const fetchNotificationConfig = async () => {
+  try {
+    const response = await fetch('/0x/config/notification-config');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.title) {
+        notificationMessage.value = {
+          title: data.title,
+          content: data.content,
+        };
+        visible1.value = true; // 显示对话框
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch notification config:', error);
+  }
+};
 
 const rules: Record<string, FormRule[]> = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -183,6 +219,16 @@ const goFree = async () => {
   }
 
   loading.value = false;
+};
+
+// 新增的函数，用于处理对话框确认操作
+const onConfirm = () => {
+  visible1.value = false;
+};
+
+// 新增的函数，用于处理对话框关闭操作
+const close1 = () => {
+  visible1.value = false;
 };
 </script>
 
