@@ -13,7 +13,7 @@ RUN cd frontend && npm run build
 
 FROM python:3.12-alpine
 
-LABEL maintainer="dairoot"
+LABEL maintainer="lyotchan"
 
 WORKDIR /app
 

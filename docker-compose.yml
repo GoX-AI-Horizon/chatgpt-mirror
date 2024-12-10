@@ -1,7 +1,7 @@
 services:
   web:
     # build: .
-    image: dairoot/chatgpt-mirror:latest
+    image: lyotchan/chatgpt-mirror:latest
 
     env_file:
       - .env
