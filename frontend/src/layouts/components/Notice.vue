@@ -52,7 +52,6 @@
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 
-import RequestApi from '@/api/request';
 import { useNotificationStore } from '@/store';
 
 const NotictList = ref([]);
@@ -77,14 +76,13 @@ const getNoticeList = async () => {
   // const res1 = await RequestApi('/api/mirror-version');
   // const data1 = await res1.json();
   // console.log(data1.data1);
-
-  const res2 = await fetch('https://notice.dairoot.cn/notice-list', {
-    method: 'POST',
-    body: JSON.stringify({}),
-    headers: { 'Content-Type': 'application/json' },
-  });
-  const data2 = await res2.json();
-  NotictList.value = data2;
+  // const res2 = await fetch('https://notice.dairoot.cn/notice-list', {
+  //   method: 'POST',
+  //   body: JSON.stringify({}),
+  //   headers: { 'Content-Type': 'application/json' },
+  // });
+  // const data2 = await res2.json();
+  // NotictList.value = data2;
 };
 
 onMounted(async () => {

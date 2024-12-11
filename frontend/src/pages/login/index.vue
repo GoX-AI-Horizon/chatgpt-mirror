@@ -5,7 +5,7 @@
         <div v-if="cfg.notice" v-html="cfg.notice"></div>
       </div>
       <div v-if="cfg.show_github" style="margin: 12px 20px">
-        <a href="https://github.com/dairoot/ChatGPT-Mirror" target="_blank" style="float: right">
+        <a href="https://github.com/GoX-AI-Horizon/chatgpt-mirror" target="_blank" style="float: right">
           <svg
             width="32"
             height="32"
@@ -34,7 +34,7 @@
           <div v-else>欢迎回来</div>
         </h2>
         <t-loading :loading="loading">
-          <t-form :data="loginForm" :label-width="0" :rules="rules" ref="loginFormRef" @submit="onSubmit">
+          <t-form ref="loginFormRef" :data="loginForm" :label-width="0" :rules="rules" @submit="onSubmit">
             <t-form-item name="username">
               <t-input v-model="loginForm.username" placeholder="用户名"></t-input>
             </t-form-item>
@@ -81,16 +81,16 @@
     </div>
 
     <t-dialog
+      v-model:visible="visible1"
       theme="warning"
       placement="center"
       :header="notificationMessage.title"
       :body="notificationMessage.content"
-      :visible.sync="visible1"
-      @confirm="onConfirm"
-      :onClose="close1"
-      :cancelBtn="null"
+      :on-close="close1"
+      :cancel-btn="null"
       :close-on-esc-keydown="false"
       :close-on-overlay-click="false"
+      @confirm="onConfirm"
     />
   </div>
 </template>

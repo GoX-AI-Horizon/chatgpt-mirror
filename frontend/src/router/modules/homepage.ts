@@ -81,6 +81,17 @@ export default [
           },
         },
       },
+      {
+        path: 'notification',
+        name: 'Notification',
+        component: () => import('@/pages/system/notification.vue'),
+        meta: {
+          title: {
+            zh_CN: '通知信息配置',
+            en_US: 'Notification Configuration',
+          },
+        },
+      },
     ],
   },
 ];
