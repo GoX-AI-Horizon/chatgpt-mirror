@@ -29,8 +29,6 @@
 import { FormProps, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
-import RequestApi from '@/api/request';
-
 const loading = ref(false);
 const notificationData = ref({
   title: '',
@@ -41,7 +39,13 @@ const handleSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError 
   if (validateResult) {
     loading.value = true;
     try {
-      const response = await RequestApi('/0x/config/notification-config/', 'POST', notificationData.value);
+      const response = await fetch('/0x/config/notification-config/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notificationData.value),
+      });
       const data = await response.json();
       if (response.ok) {
         MessagePlugin.success('通知配置成功');
@@ -63,7 +67,12 @@ const handleSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError 
 const handleDeleteAll = async () => {
   loading.value = true;
   try {
-    const response = await RequestApi('/0x/config/notification-config/', 'DELETE');
+    const response = await fetch('/0x/config/notification-config/', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     if (response.ok) {
       MessagePlugin.success('所有通知已删除');
       notificationData.value = { title: '', content: '' };
