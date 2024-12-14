@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column; padding: 0 20px">
     <div style="display: flex; justify-content: space-between">
       <div style="width: 400px; float: left">
         <div v-if="cfg.notice" v-html="cfg.notice"></div>
