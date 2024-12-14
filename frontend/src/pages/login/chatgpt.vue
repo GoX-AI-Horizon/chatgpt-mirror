@@ -64,39 +64,26 @@
             </div>
           </div>
         </t-space>
-
-        <!-- <t-list class="list-block" split>
-          <t-list-item
-            v-for="item in tableData"
-            :key="item.id"
-            @click="onSelect(item.id)"
-            :class="{ 'is-disabled': !item.auth_status }"
-          >
-            <t-list-item-meta>
-              <template #description>
-                <t-space>
-                  <t-tag theme="primary" variant="outline" style="width: 40px">{{ item.plan_type }}</t-tag>
-                  {{ item.chatgpt_flag }}
-                </t-space>
-              </template>
-            </t-list-item-meta>
-
-            <template #action>
-              <div>
-                <t-tag v-if="item.auth_status === false" theme="danger" variant="light"> 已过期 </t-tag>
-                <t-tag v-else-if="item.use_count.last_1h + item.use_count.last_2h + item.use_count.last_3h < 20" theme="success" variant="light"> 空闲 </t-tag>
-                <t-tag v-else theme="warning" variant="light"> 繁忙 </t-tag>
-              </div>
-            </template>
-          </t-list-item>
-      </t-list> -->
       </t-loading>
     </t-dialog>
+
+    <!-- 新增的通知对话框 -->
+    <t-dialog
+      v-model:visible="visible1"
+      theme="warning"
+      placement="center"
+      :header="notificationMessage.title"
+      :body="notificationMessage.content"
+      :on-close="close1"
+      :cancel-btn="null"
+      :close-on-esc-keydown="false"
+      :close-on-overlay-click="false"
+      @confirm="onConfirm"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
@@ -117,8 +104,12 @@ interface TableData {
 }
 const tableData = ref<TableData[]>([]);
 
+const notificationMessage = ref({ title: '', content: '' }); // 新增的状态变量，用于存储通知信息
+const visible1 = ref(false); // 控制对话框的显示状态
+
 onMounted(async () => {
   await getUserChatGPTAccountList();
+  await fetchNotificationConfig(); // 新增的函数调用
 });
 
 const getGPTUsePercent = (item: any) => {
@@ -140,6 +131,25 @@ const getUserChatGPTAccountList = async () => {
   }
 };
 
+// 新增的函数，用于获取通知配置
+const fetchNotificationConfig = async () => {
+  try {
+    const response = await fetch('/0x/config/notification-config');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.title) {
+        notificationMessage.value = {
+          title: data.title,
+          content: data.content,
+        };
+        visible1.value = true; // 显示对话框
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch notification config:', error);
+  }
+};
+
 const onClose = () => {
   router.push({ name: 'login' });
 };
@@ -157,6 +167,16 @@ const onSelect = async (chatgptId: number) => {
     MessagePlugin.success('登录成功');
     window.location.href = '/'; // 跳转到首页
   }
+};
+
+// 新增的函数，用于处理对话框确认操作
+const onConfirm = () => {
+  visible1.value = false;
+};
+
+// 新增的函数，用于处理对话框关闭操作
+const close1 = () => {
+  visible1.value = false;
 };
 </script>
 

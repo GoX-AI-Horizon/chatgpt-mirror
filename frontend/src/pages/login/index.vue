@@ -79,19 +79,6 @@
         </div>
       </t-card>
     </div>
-
-    <t-dialog
-      v-model:visible="visible1"
-      theme="warning"
-      placement="center"
-      :header="notificationMessage.title"
-      :body="notificationMessage.content"
-      :on-close="close1"
-      :cancel-btn="null"
-      :close-on-esc-keydown="false"
-      :close-on-overlay-click="false"
-      @confirm="onConfirm"
-    />
   </div>
 </template>
 
@@ -117,32 +104,9 @@ const loginForm = reactive({
   invite_id: undefined,
 });
 
-const notificationMessage = ref({ title: '', content: '' }); // 新增的状态变量，用于存储通知信息
-const visible1 = ref(false); // 控制对话框的显示状态
-
 onMounted(async () => {
   await getVersionCfg();
-  await fetchNotificationConfig(); // 新增的函数调用
 });
-
-// 新增的函数，用于获取通知配置
-const fetchNotificationConfig = async () => {
-  try {
-    const response = await fetch('/0x/config/notification-config');
-    if (response.ok) {
-      const data = await response.json();
-      if (data.title) {
-        notificationMessage.value = {
-          title: data.title,
-          content: data.content,
-        };
-        visible1.value = true; // 显示对话框
-      }
-    }
-  } catch (error) {
-    console.error('Failed to fetch notification config:', error);
-  }
-};
 
 const rules: Record<string, FormRule[]> = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -155,7 +119,6 @@ const rules: Record<string, FormRule[]> = {
 const loginFormRef = ref<FormInstanceFunctions>(null);
 
 const IsRegister = computed(() => {
-  // console.log('route.path', route.path, route.path.endsWith('/register'));
   return !route.path.endsWith('/login');
 });
 
@@ -178,9 +141,6 @@ const onSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError }) =
       case 'register':
         url = '/0x/user/register';
         break;
-      // case 'invite_register':
-      //   url = '/api/invite-register';
-      //   break;
       default:
         url = '/0x/user/login';
     }
@@ -219,16 +179,6 @@ const goFree = async () => {
   }
 
   loading.value = false;
-};
-
-// 新增的函数，用于处理对话框确认操作
-const onConfirm = () => {
-  visible1.value = false;
-};
-
-// 新增的函数，用于处理对话框关闭操作
-const close1 = () => {
-  visible1.value = false;
 };
 </script>
 
