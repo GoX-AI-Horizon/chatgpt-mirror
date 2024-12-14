@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/7b868672-cfaf-430c-9ec4-f1617a428225
 
 ```bash
 # 切换到 home 目录，并克隆 ChatGPT-Mirror 仓库
-cd /home/ && git clone https://github.com/dairoot/ChatGPT-Mirror.git
+cd /home/ && git clone https://github.com/GoX-AI-Horizon/chatgpt-mirror.git
 
 cd ChatGPT-Mirror/
 
