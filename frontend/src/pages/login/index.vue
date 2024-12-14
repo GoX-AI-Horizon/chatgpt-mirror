@@ -24,6 +24,7 @@
           </svg>
         </a>
       </div>
+      <div v-else style="height: 64px" />
     </div>
     <div class="login-container">
       <t-card class="login-card">
@@ -71,11 +72,11 @@
             已经拥有帐户？<t-link :underline="false" href="/admin/#/login" style="color: #10a37f">登录</t-link> or
             <t-link :underline="false" style="color: red" @click="goFree">免费体验</t-link>
           </div>
-          <div v-else>
+          <!-- <div v-else>
             没有帐户？
             <t-link :underline="false" href="/admin/#/register" style="color: #10a37f">注册</t-link> or
             <t-link :underline="false" style="color: red" @click="goFree">免费体验</t-link>
-          </div>
+          </div> -->
         </div>
       </t-card>
     </div>
