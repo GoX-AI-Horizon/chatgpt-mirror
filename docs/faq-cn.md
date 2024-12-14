@@ -20,6 +20,7 @@ centos 7 可能无法安装 warp，请使用更高级系统版本
 
 ```bash
 docker compose -f docker-compose-warp.yml up
+docker compose -f docker-compose-warp.yml up -d # -d 后台运行 -f 指定文件 up 启动
 # 验证局部模式的 warp 是否安装成功，如果 warp=off 则 warp 安装失败
 curl -s --socks5-hostname 127.0.0.1:1080 https://cloudflare.com/cdn-cgi/trace |grep warp
 ```
