@@ -121,12 +121,11 @@ const getUserChatGPTAccountList = async () => {
 
   const data = await response.json();
   tableLoading.value = false;
-  if (data.results.length === 1 && data.results[0].auth_status) {
-    onSelect(data.results[0].id);
-  } else {
-    tableVisible.value = false; // 不再使用弹窗
-    tableData.value = data.results;
-  }
+  // if (data.results.length === 1 && data.results[0].auth_status) {
+  //   onSelect(data.results[0].id);
+  // } else {
+  tableData.value = data.results;
+  // }
 };
 
 // 新增的函数，用于获取通知配置
