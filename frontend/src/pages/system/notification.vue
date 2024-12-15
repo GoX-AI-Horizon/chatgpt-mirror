@@ -27,12 +27,35 @@
 
 <script setup lang="ts">
 import { FormProps, MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const loading = ref(false);
 const notificationData = ref({
   title: '',
   content: '',
+});
+
+// 新增的函数，用于获取通知配置
+const fetchNotificationConfig = async () => {
+  try {
+    const response = await fetch('/0x/config/notification-config');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.title) {
+        notificationData.value = {
+          title: data.title,
+          content: data.content,
+        };
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch notification config:', error);
+  }
+};
+
+// 在组件挂载时获取通知配置
+onMounted(async () => {
+  await fetchNotificationConfig();
 });
 
 const handleSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError }) => {
@@ -49,7 +72,6 @@ const handleSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError 
       const data = await response.json();
       if (response.ok) {
         MessagePlugin.success('通知配置成功');
-        notificationData.value = { title: '', content: '' };
       } else {
         MessagePlugin.error(JSON.stringify(Object.values(data)[0]));
       }

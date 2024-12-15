@@ -138,29 +138,31 @@ const onSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError }) =
     loading.value = true;
     let url;
 
-    switch (loginType.value) {
-      case 'register':
-        url = '/0x/user/register';
-        break;
-      default:
-        url = '/0x/user/login';
-    }
-    if (loginType.value === 'invite_register') {
-      const { hash } = window.location;
-      const paramsString = hash.split('?')[1];
-      const params = new URLSearchParams(paramsString);
-      loginForm.invite_token = params.get('invite_token');
-      loginForm.invite_id = params.get('id');
-    }
+    try {
+      switch (loginType.value) {
+        case 'register':
+          url = '/0x/user/register';
+          break;
+        default:
+          url = '/0x/user/login';
+      }
+      if (loginType.value === 'invite_register') {
+        const { hash } = window.location;
+        const paramsString = hash.split('?')[1];
+        const params = new URLSearchParams(paramsString);
+        loginForm.invite_token = params.get('invite_token');
+        loginForm.invite_id = params.get('id');
+      }
 
-    const data = await userStore.login(url, loginForm);
-    if (data.admin_token && data.is_admin) {
-      router.push({ name: 'User' });
-    } else if (data.admin_token) {
-      return router.push({ name: 'LoginChatgpt' });
+      const data = await userStore.login(url, loginForm);
+      if (data.admin_token && data.is_admin) {
+        router.push({ name: 'User' });
+      } else if (data.admin_token) {
+        return router.push({ name: 'LoginChatgpt' });
+      }
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   } else {
     console.error('表单引用未定义', firstError);
   }

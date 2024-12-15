@@ -1,86 +1,84 @@
 <template>
-  <div>
-    <t-dialog
-      :visible="tableVisible"
-      header="请选择 ChatGPT 账号"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      :on-close="onClose"
-      width="930px"
-    >
-      <t-loading :loading="tableLoading">
-        <t-space break-line>
-          <div
-            v-for="item in tableData"
-            :key="item.id"
-            style="width: 160px; cursor: pointer"
-            :class="{ 'is-disabled': !item.auth_status }"
-            @click="onSelect(item.id)"
-          >
-            <div style="background: #f2f4f7; padding: 8px; border-radius: 5px">
-              <t-space direction="vertical" style="width: 100%" :size="8">
-                <div>
-                  <div style="display: flex; justify-content: space-between">
-                    <t-tag
-                      size="small"
-                      theme="primary"
-                      variant="outline"
-                      style="width: 35px"
-                      :class="{ 'shiny-blue': item.plan_type !== 'free' }"
-                      >{{ item.plan_type }}</t-tag
-                    >
-                    <span>{{ item.chatgpt_flag }} </span>
-                  </div>
-                </div>
-
-                <div style="font-size: 12px; display: flex; justify-content: space-between">
-                  <div>实时状态</div>
+  <div v-if="!tableVisible" class="big-container">
+    <div class="container">
+      <h2 class="header">请选择 ChatGPT 账号</h2>
+      <div class="account-selection">
+        <t-loading :loading="tableLoading">
+          <t-space break-line>
+            <div
+              v-for="item in tableData"
+              :key="item.id"
+              class="account-item"
+              :class="{ 'is-disabled': !item.auth_status }"
+              @click="onSelect(item.id)"
+            >
+              <div class="account-item-content">
+                <t-space direction="vertical" style="width: 100%" :size="8">
                   <div>
-                    <span v-if="item.auth_status === false"> 已过期 </span>
-                    <span v-else-if="getGPTUsePercent(item) < 40"> 空闲 </span>
-                    <span v-else-if="getGPTUsePercent(item) < 80"> 忙碌 </span>
-                    <span v-else> 繁忙 | 可用 </span>
+                    <div class="account-item-header">
+                      <t-tag
+                        size="small"
+                        theme="primary"
+                        variant="outline"
+                        class="plan-type-tag"
+                        :class="{ 'shiny-blue': item.plan_type !== 'free' }"
+                        >{{ item.plan_type }}</t-tag
+                      >
+                      <span>{{ item.chatgpt_flag }} </span>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <t-progress
-                    v-if="getGPTUsePercent(item) < 40"
-                    :percentage="getGPTUsePercent(item)"
-                    status="success"
-                    :label="false"
-                  />
-                  <t-progress
-                    v-else-if="getGPTUsePercent(item) < 80"
-                    :percentage="getGPTUsePercent(item)"
-                    status="warning"
-                    :label="false"
-                  />
-                  <t-progress v-else :percentage="getGPTUsePercent(item)" status="error" :label="false" />
-                </div>
+                  <div class="account-item-status">
+                    <div>实时状态</div>
+                    <div>
+                      <span v-if="item.auth_status === false"> 已过期 </span>
+                      <span v-else-if="getGPTUsePercent(item) < 40"> 空闲 </span>
+                      <span v-else-if="getGPTUsePercent(item) < 80"> 忙碌 </span>
+                      <span v-else> 繁忙 | 可用 </span>
+                    </div>
+                  </div>
 
-                <div></div>
-              </t-space>
+                  <div>
+                    <t-progress
+                      v-if="getGPTUsePercent(item) < 40"
+                      :percentage="getGPTUsePercent(item)"
+                      status="success"
+                      :label="false"
+                    />
+                    <t-progress
+                      v-else-if="getGPTUsePercent(item) < 80"
+                      :percentage="getGPTUsePercent(item)"
+                      status="warning"
+                      :label="false"
+                    />
+                    <t-progress v-else :percentage="getGPTUsePercent(item)" status="error" :label="false" />
+                  </div>
+
+                  <div></div>
+                </t-space>
+              </div>
             </div>
-          </div>
-        </t-space>
-      </t-loading>
-    </t-dialog>
-
-    <!-- 新增的通知对话框 -->
-    <t-dialog
-      v-model:visible="visible1"
-      theme="warning"
-      placement="center"
-      :header="notificationMessage.title"
-      :body="notificationMessage.content"
-      :on-close="close1"
-      :cancel-btn="null"
-      :close-on-esc-keydown="false"
-      :close-on-overlay-click="false"
-      @confirm="onConfirm"
-    />
+          </t-space>
+        </t-loading>
+      </div>
+      <t-button class="exit-button" @click="onClose">退出</t-button>
+    </div>
   </div>
+  <t-dialog
+    :visible="visible1"
+    theme="warning"
+    placement="center"
+    :header="notificationMessage.title"
+    :on-close="close1"
+    :cancel-btn="null"
+    :close-on-esc-keydown="false"
+    :close-on-overlay-click="false"
+    @confirm="onConfirm"
+  >
+    <template #body>
+      <div v-html="notificationMessage.content" />
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -126,7 +124,7 @@ const getUserChatGPTAccountList = async () => {
   if (data.results.length === 1 && data.results[0].auth_status) {
     onSelect(data.results[0].id);
   } else {
-    tableVisible.value = true;
+    tableVisible.value = false; // 不再使用弹窗
     tableData.value = data.results;
   }
 };
@@ -181,11 +179,86 @@ const close1 = () => {
 </script>
 
 <style lang="less" scoped>
+.header {
+  margin-bottom: 20px;
+}
+
+.big-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  padding-top: 30px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: calc(100vh - 90px);
+
+  width: 100%;
+  @media (max-width: 1600px) {
+    max-width: calc(200px * 4 + 16px * 3 + 32px); /* 显示4个item */
+  }
+
+  @media (max-width: 1200px) {
+    max-width: calc(200px * 3 + 16px * 2 + 32px); /* 显示3个item */
+  }
+
+  @media (max-width: 800px) {
+    max-width: calc(200px * 2 + 16px * 1 + 32px); /* 显示2个item */
+  }
+
+  @media (max-width: 576px) {
+    .account-item {
+      width: 42vw; /* 移动端宽度 */
+    }
+
+    max-width: calc(42vw * 2 + 16px * 1 + 32px); /* 显示2个item */
+  }
+}
+
+.account-selection {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+.account-item {
+  width: 200px;
+  cursor: pointer;
+}
+
+.account-item-content {
+  background: #f2f4f7;
+  padding: 12px;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.account-item:hover .account-item-content {
+  transform: scale(1.05);
+}
+
+.account-item-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.account-item-status {
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.exit-button {
+  margin-top: 20px;
+}
+
 .is-disabled {
   pointer-events: none;
-  /* Prevent interaction */
   opacity: 0.5;
-  /* Optional: Make the item look visually disabled */
 }
 
 .shiny-blue {
